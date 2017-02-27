@@ -7,7 +7,7 @@
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 	<!-- 定义分片式连接池 -->
-	<bean id="" class="redis.clients.jedis.ShardedJedisPool">
+	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
 		<constructor-arg index="0"> <!-- 第一个参数 -->
 			<bean class="redis.clients.jedis.JedisPoolConfig">
 				<property name="maxTotal" value="${redis.maxTotal}"></property>

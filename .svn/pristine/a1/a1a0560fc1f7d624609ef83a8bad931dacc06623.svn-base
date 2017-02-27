@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taotao.common.bean.ItemCatData;
 import com.taotao.common.bean.ItemCatResult;
@@ -36,11 +37,8 @@ public class ItemCatService extends BaseService<ItemCat> {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
     private final ObjectMapper MAPPER = new ObjectMapper();
-
-    private static final String REDIS_KEY = "TAOTAO_MANAGE_ITEM_CAT_ALL"; // 最佳实践，项目名+模块名+业务名
-
-    private static final Integer REDIS_TIME = 60 * 60 * 24 * 30 * 3;
 
     /**
      * 全部查询，并且生成树状结构
@@ -48,18 +46,17 @@ public class ItemCatService extends BaseService<ItemCat> {
      */
     public ItemCatResult queryAllToTree() {
 	ItemCatResult result = new ItemCatResult();
-	/*
-	 * 先从缓存中命中，如果命中就返回，如果没有命中执行以下程序 ，这里加入缓存有可能影响业务逻辑的正常执行，这里需要进行优化处理
-	 * 进行trycatch，出现异常捕获后继续向下进行
-	 */
-	try {
-	    String cacheData = this.redisService.get(REDIS_KEY);
-	    if (StringUtils.isNotEmpty(cacheData)) {
+
+	// 先从缓存中命中，如果命中就返回，如果没有命中执行以下程序
+	String key = "TAOTAO_MANAGE_ITEM_CAT_ALL"; // 最佳实践，项目名+模块名+业务名
+	String cacheData = this.redisService.get(key);
+	if (StringUtils.isNotEmpty(cacheData)) {
+	    try {
 		// 命中,进行反序列化
-		return MAPPER.readValue(cacheData, ItemCatResult.class);
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
+		MAPPER.readValue(cacheData, ItemCatResult.class);
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    } 
 	}
 
 	// 全部查出，并且在内存中生成树形结构
@@ -108,13 +105,10 @@ public class ItemCatService extends BaseService<ItemCat> {
 	    }
 	}
 
-	/*
-	 * 这里不能用JsonProcessingException进行捕获，需要使用Exception大的异常进行获取添加缓存时的异常
-	 */
 	try {
 	    // 将结果集写入到缓存中
-	    this.redisService.set(REDIS_KEY, MAPPER.writeValueAsString(result), REDIS_TIME);
-	} catch (Exception e) {
+	    this.redisService.set(key, MAPPER.writeValueAsString(result), 60 * 60 * 24 * 30 * 3);
+	} catch (JsonProcessingException e) {
 	    e.printStackTrace();
 	}
 	return result;
