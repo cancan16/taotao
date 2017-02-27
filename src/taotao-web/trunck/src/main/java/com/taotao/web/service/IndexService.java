@@ -1,0 +1,114 @@
+package com.taotao.web.service;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.taotao.common.bean.EasyUIResult;
+import com.taotao.manage.pojo.Content;
+
+/**
+ * @ClassName IndexService
+ * @Author volc
+ * @Description TODO
+ * @Date 2017年2月26日 上午10:49:42
+ */
+@Service
+public class IndexService {
+    @Autowired
+    private ApiService apiService;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    
+    @Value("${TAOTAO_MANAGE_URL}")
+    private String TAOTAO_MANAGE_URL;
+    
+    @Value("${INDEX_AD1_URL}")
+    private String INDEX_AD1_URL;
+    
+    @Value("${INDEX_AD2_URL}")
+    private String INDEX_AD2_URL;
+
+    /**
+     * @MethodName queryIndexAD1 
+     * @Author volc
+     * @Description 获取banner大广告位
+     * @Date 2017年2月26日 下午2:50:26
+     */
+    public String queryIndexAD1() {
+	try {
+	    String url = TAOTAO_MANAGE_URL + INDEX_AD1_URL;
+	    String contentJson = this.apiService.doGet(url);
+	    if (StringUtils.isEmpty(contentJson)) { // 判断是否为null或者为""
+	        return null;
+	    }
+	    // 解析json生成前端所需要的json数据
+	    JsonNode jsonNode = MAPPER.readTree(contentJson);
+	    ArrayNode arrayNode = (ArrayNode) jsonNode.get("rows");
+	    // 定义含有map集合的list用于组织封装想要的格式
+	    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+	    for(JsonNode row :arrayNode) {
+		// 有顺序的hashmap
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("srcB", row.get("pic").asText()); // 获取节点对象并获取值
+		map.put("height", "240");
+		map.put("alt", row.get("title").asText());
+		map.put("width", "670");
+		map.put("src", row.get("pic").asText());
+		map.put("width", "550");
+		map.put("href", row.get("url").asText());
+		map.put("height", "240");
+		result.add(map);
+	    }
+	    return MAPPER.writeValueAsString(result);
+	}catch(Exception e){
+	}
+	return null;
+    }
+
+    /**
+     * @MethodName queryIndexAD2 
+     * @Author volc
+     * @Description 获取右上方小广告位
+     * @Date 2017年2月26日 下午2:50:12
+     */
+    @SuppressWarnings("unchecked")
+    public String queryIndexAD2() {
+	try {
+	    String url = TAOTAO_MANAGE_URL + INDEX_AD2_URL;
+	    String contentJson = this.apiService.doGet(url);
+	    if (StringUtils.isEmpty(contentJson)) { // 判断是否为null或者为""
+	        return null;
+	    }
+	    EasyUIResult easyUIResult = EasyUIResult.formatToList(contentJson, Content.class);
+	    
+	    // 解析json生成前端所需要的json数据
+//	    JsonNode jsonNode = MAPPER.readTree(contentJson);
+//	    ArrayNode arrayNode = (ArrayNode) jsonNode.get("rows");
+	    // 定义含有map集合的list用于组织封装想要的格式
+	    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+	    for(Content content : (List<Content>)easyUIResult.getRows()) {
+		// 有顺序的hashmap
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("width", "310"); // 获取节点对象并获取值
+		map.put("height", "70");
+		map.put("src", content.getPic());
+		map.put("href", "http://c.fa.jd.com/adclick?sid=2&cid=601&aid=3614&bid=4196&unit=35984&advid=109277&guv=&url=http://sale.jd.com/mall/FQLUNlG53wbX7m.html");
+		map.put("alt", content.getTitle());
+		map.put("widthB", "210");
+		map.put("heightB", "70");
+		map.put("srcB", content.getPic());
+		result.add(map);
+	    }
+	    return MAPPER.writeValueAsString(result);
+	}catch(Exception e){
+	}
+	return null;
+    }
+}
