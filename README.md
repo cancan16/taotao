@@ -9,3 +9,4 @@
 > * taotao-parent
 > * taotao-web/trunck
 > * taotao-sso/trunck
+> * taotao-order/trunck
