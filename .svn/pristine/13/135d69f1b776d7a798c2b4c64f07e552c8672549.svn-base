@@ -1,0 +1,24 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+	http://www.springframework.org/schema/rabbit/spring-rabbit-1.4.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- 定义RabbitMQ的连接工厂 -->
+	<rabbit:connection-factory id="connectionFactory" host="${rabbitmq.host}" port="${rabbitmq.port}" username="${rabbitmq.username}" password="${rabbitmq.password}"
+		virtual-host="${rabbitmq.vhost}" />
+
+	<!-- 定义管理 用于声明交换机 -->
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	<!-- 定义队列 ,一个持久化自动声明的队列 ，需要绑定后台系统(taotao-manage-web)创建的交换机，这种绑定要人工维护实现(设置权限更灵活) -->
+	<rabbit:queue name="taotao-search-item-queue" durable="true" auto-declare="true" />
+
+	<!-- 定义消费者 -->
+	<bean id="itemMQHandler" class="com.taotao.search.mq.handler.ItemMQHandler" />
+
+	<!-- 创建监听 ,消费者监听队列 -->
+	<rabbit:listener-container connection-factory="connectionFactory">
+		<rabbit:listener ref="itemMQHandler" method="excute" queue-names="taotao-search-item-queue" />
+	</rabbit:listener-container>
+</beans>
