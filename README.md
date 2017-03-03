@@ -8,3 +8,4 @@
 > * taotao-sso/trunck
 > * taotao-order/trunck
 > * taotao-search/trunck
+> * taotao-cart/trunck
