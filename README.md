@@ -1,10 +1,4 @@
 ### taotao商城
-#### 参考项目
-> * itcast-httpclient/trunck
-> * itcast-usermanage/trunck
-> * itcast-redis/trunck
-> * itcast-solr/trunck
-> * itcast-rabbitmq/trunck
 
 #### 淘淘项目
 > * taotao-common/trunck
