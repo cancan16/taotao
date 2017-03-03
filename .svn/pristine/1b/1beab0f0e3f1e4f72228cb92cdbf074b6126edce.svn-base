@@ -65,7 +65,7 @@ public class OrderController {
     public ModelAndView toCartOrder() {
 	ModelAndView mv = new ModelAndView("order-cart");
 	User user = UserThreadLocal.get();
-	List<Cart> carts = this.carService.queryCartListByUserId(user.getId());
+	List<Cart> carts = this.carService.queryItemListByUserId(user.getId());
 	mv.addObject("carts", carts);
 	return mv;
     }

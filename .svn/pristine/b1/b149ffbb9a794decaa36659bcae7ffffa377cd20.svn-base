@@ -70,7 +70,7 @@ public class CartService {
      */
     public List<Cart> queryCartList() {
 	User user = UserThreadLocal.get();
-	return this.queryCartList(user.getId());
+	return queryCartList(user.getId());
     }
 
     /**
@@ -111,8 +111,9 @@ public class CartService {
      * @Date 2017年3月3日 上午12:57:20
      */
     public List<Cart> queryCartList(Long userId) {
+	User user = UserThreadLocal.get();
 	Example example = new Example(Cart.class);
-	example.createCriteria().andEqualTo("userId", userId);
+	example.createCriteria().andEqualTo("userId", user.getId());
 	example.setOrderByClause("created DESC"); // 根据创建时间倒叙排序
 	return this.cartMapper.selectByExample(example);
     }
