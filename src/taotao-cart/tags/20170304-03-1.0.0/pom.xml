@@ -7,10 +7,7 @@
 	</parent>
 	<groupId>com.taotao.cart</groupId>
 	<artifactId>taotao-cart</artifactId>
-	<!-- 当前是快照版，当打包上线时应该变成稳定版 -->
-	<!--<version>1.0.0-SNAPSHOT</version>-->
-	<!-- 稳定版 -->
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<dependencies>
