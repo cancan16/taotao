@@ -6,18 +6,19 @@
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 
+	<!-- 线程执行器配置，用于任务注册 -->
+	<bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10" />
+		<property name="maxPoolSize" value="100" />
+		<property name="queueCapacity" value="500" />
+	</bean>
+
+	<bean id="testJobTask" class="cn.itcast.quartz.MyJobThread" />
+
 	<!-- 定义任务bean -->
-	<bean name="myJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-		<!-- 指定具体的job类 -->
-		<property name="jobClass" value="cn.itcast.quartz.MyJob" />
-		<!-- 指定job的名称 -->
-		<property name="name" value="myJob" />
-		<!-- 指定job的分组 -->
-		<property name="group" value="jobs" />
-		<!-- 必须设置为true，如果为false，当没有活动的触发器与之关联时会在调度器中删除该任务 -->
-		<property name="durability" value="true" />
-		<!-- 指定spring容器的key，如果不设定在job中的jobmap中是获取不到spring容器的 -->
-		<property name="applicationContextJobDataKey" value="applicationContext" />
+	<bean name="myJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="testJobTask" />
+		<property name="targetMethod" value="service" />
 	</bean>
 
 	<!-- 定义触发器 -->
@@ -39,6 +40,8 @@
 				<!-- <ref bean="cronTrigger2" /> -->
 			</list>
 		</property>
+		<!-- ThreadPoolTaskExecutor，线程池，用来并行执行每个对应的job，提高效率，这也是上面提到不推荐使用jdk自身timer的一个很重要的原因 -->
+		<property name="taskExecutor" ref="executor" />
 	</bean>
 
 </beans>
