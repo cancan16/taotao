@@ -49,7 +49,7 @@ public class RedisService {
      * @Date 2017年2月27日 下午8:45:51
      */
     public String set(final String key, final String value) {
-	return this.execute(new Function<String, ShardedJedis>() {
+	return this.execute(new Function<String, ShardedJedis>() { // 匿名实现类存在作用域，不能使用非final参数
 	    @Override
 	    public String callback(ShardedJedis e) {
 		return e.set(key, value); // 添加成功返回OK

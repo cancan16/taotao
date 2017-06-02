@@ -55,8 +55,40 @@ public class ItemCatService extends BaseService<ItemCat> {
 	 */
 	try {
 	    String cacheData = this.redisService.get(REDIS_KEY);
+	    /**
+	     * cacheData格式
+	        {
+	          "data": [
+	            {
+	              "u": "/products/1.html",
+	              "n": "<a href='/products/1.html'>图书、音像、电子书刊</a>",
+	              "i": [
+	                {
+	                  "u": "/products/2.html",
+	                  "n": "电子书刊",
+	                  "i": [
+	                    "/products/3.html|电子书",
+	                    "/products/4.html|网络原创",
+	                    "/products/5.html|数字杂志",
+	                    "/products/6.html|多媒体图书"
+	                  ]
+	                },
+	                {
+	                  "u": "/products/7.html",
+	                  "n": "音像",
+	                  "i": [
+	                    "/products/8.html|音乐",
+	                    "/products/9.html|影视",
+	                    "/products/10.html|教育音像"
+	                  ]
+	                }
+	              ]
+	            }
+	          ]
+	        }
+	     */
 	    if (StringUtils.isNotEmpty(cacheData)) {
-		// 命中,进行反序列化
+		// 命中,进行反序列化，ItemCatData中items是个泛型的list，并不会转成具体的对象
 		return MAPPER.readValue(cacheData, ItemCatResult.class);
 	    }
 	} catch (Exception e) {
