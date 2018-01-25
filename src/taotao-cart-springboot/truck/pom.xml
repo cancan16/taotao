@@ -34,6 +34,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
+		<!-- 导入spring-boot-starter-jdbc说明需要事物，就会进行一系列的初始化，并设置了事务管理器 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		
 
 		<!-- Mybatis -->
 		<dependency>
@@ -111,7 +118,6 @@
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
-			<version>1.4.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
