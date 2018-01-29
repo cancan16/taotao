@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.github.abel533.entity.Example;
 import com.taotao.cart.bean.Item;
 import com.taotao.cart.bean.User;
@@ -18,6 +20,7 @@ import com.taotao.cart.userThredLocal.UserThreadLocal;
  * @Date 2017年3月2日 下午6:31:31
  */
 @Service
+@Transactional
 public class CartService {
 
     @Autowired
