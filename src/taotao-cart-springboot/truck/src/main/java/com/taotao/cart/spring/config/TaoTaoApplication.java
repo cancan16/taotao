@@ -1,18 +1,24 @@
 package com.taotao.cart.spring.config;
 
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 @Configuration
-@PropertySource(value = { "classpath:jdbc.properties", "classpath:env.properties", "classpath:httpclient.properties" })
+@PropertySource(value = { "classpath:jdbc.properties", "classpath:evn.properties", "classpath:httpclient.properties" })
 @ComponentScan(basePackages = "com.taotao")
-public class TaoTaoApplication {
+@ImportResource("classpath:dubbo/dubbo-consumer.xml")
+@SpringBootApplication
+public class TaoTaoApplication extends SpringBootServletInitializer {
 
     @Value("${jdbc.url}")
     private String jdbcUrl;
@@ -46,6 +52,13 @@ public class TaoTaoApplication {
 	// 每个分区最小的连接数
 	boneCPDataSource.setMinConnectionsPerPartition(5);
 	return boneCPDataSource;
+    }
+
+    // 重写configure方法
+    @Override
+    public SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+	// 设置启动类，用于独立tomcat启动项目的入口
+	return builder.sources(TaoTaoApplication.class);
     }
 
 }
